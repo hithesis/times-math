@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: texlive/texlive:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install raster test renderer
+        run: apt-get update && apt-get install -y --no-install-recommends mupdf-tools python3-venv
+
+      - name: Check bundled font sources and outlines
+        run: make check-font
+
+      - name: Check generated symbol traversal
+        run: |
+          texlua dev/gen-coverage.lua
+          git -c safe.directory="$GITHUB_WORKSPACE" diff --exit-code -- test/test-coverage.tex
+
+      - name: Run regression tests
+        run: make check
+
+      - name: Build and check documents
+        run: make check-doc
+
+      - name: Build and check release archives
+        run: make ctan
+
+      - name: Upload documents
+        uses: actions/upload-artifact@v4
+        with:
+          name: documents
+          path: build/doc/*.pdf
+
+      - name: Upload release archives
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-archives
+          path: |
+            times-math-ctan.zip
+            times-math.tds.zip
+
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs
+          path: |
+            test/output/**/console.txt
+            test/output/**/*.log
+            test/output/**/*.layout.json
+            test/output/**/test-integral-layout.pdf
+            build/**/*.log

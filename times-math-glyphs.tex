@@ -1,0 +1,604 @@
+% !TEX program = lualatex
+% Adapted from unimath-symbols and unimath-euler.ltx; see LICENSE.
+\documentclass[a4paper,final]{article}
+\makeatletter
+
+\usepackage{ragged2e,setspace,booktabs,catchfile,shortvrb,geometry,graphicx,metalogo,textcomp,longtable,array,xcolor}
+\geometry{margin=24mm}
+\setlength{\parindent}{0pt}
+
+\def\cmd#1{\texttt{\textbackslash\expandafter\@gobble\string#1}}
+
+\usepackage{fontspec}
+\setmainfont{texgyrepagella}%
+ [
+  Extension = .otf,
+  UprightFont = *-regular,
+  ItalicFont = *-italic,
+  BoldFont = *-bold,
+  BoldItalicFont = *-bolditalic,
+  Ligatures=TeX,
+  Numbers={Lowercase,Monospaced},
+ ]
+\usepackage[math-style=literal,bold-style=literal]{times-math}
+\usepackage[hidelinks,pdftitle={Times Math glyph reference},pdfauthor={Junhao Wu}]{hyperref}
+
+\ExplSyntaxOn
+\cs_generate_variant:Nn \fontspec_set_fontface:NNnn {c}
+\cs_generate_variant:Nn \fontspec_set_family:Nnn {cV}
+
+\def\FINISH{}
+\newcount\Nfonts
+\def\defmathfont#1#2#3{
+  \Nfonts=\numexpr\Nfonts+1\relax
+  \tl_set:cn {MTcolour#1} {#3}
+  \newcounter{#1}
+  \setcounter{#1}{-1}
+  \fontspec_set_fontface:cNnn {#1} \x
+    {ItalicFont={},BoldFont={}} {#2}
+  \tl_set:Nn \l_tmpa_tl {ItalicFont={},BoldFont={}}
+  \sys_if_engine_luatex:T
+    {\tl_put_right:Nn \l_tmpa_tl {,Renderer=HarfBuzz}}
+  \fontspec_set_family:cVn {MTfamily#1} \l_tmpa_tl {#2}
+  \tl_gput_right:Nn \FINISH {
+    \refstepcounter{#1}\label{count:#1}
+  }
+}
+\def\defrawmathfont#1#2#3{
+  \defmathfont{#1}{#2}{#3}
+  \fontspec_set_family:Nnn \l_tmpa_tl {Script=Math,Colour=#3} {#2}
+  \exp_args:NnnV \DeclareSymbolFont {MT#1} {TU} \l_tmpa_tl {m} {n}
+}
+\def\MTRawOperator#1#2#3{
+  \Umathchar 1~ \use:c {symMT#1}~ #2\scan_stop:
+  \tl_if_in:NnT \l__um_nolimits_tl {#3} {\nolimits}
+  \sb{0}\sp{1}
+}
+\def\MTRawOverlay#1#2#3{
+  \sys_if_engine_luatex:TF
+    {\Umathaccent overlay~fixed~0~ \use:c {symMT#1}~ #2\scan_stop: {\MTcircle}}
+    {\Umathaccent 0~ \use:c {symMT#1}~ #2\scan_stop: {\MTcircle}}
+}
+\ExplSyntaxOff
+
+\def\defmathfallback#1{
+  \Nfonts=\numexpr\Nfonts+1\relax
+  \newcounter{#1}
+  \setcounter{#1}{-1}
+  \g@addto@macro\FINISH{%
+    \refstepcounter{#1}\label{count:#1}
+  }
+}
+
+\defrawmathfont{xits}{XITSMath-Regular.otf}{CC6666}
+\defrawmathfont{tgm}{texgyretermes-math.otf}{66CC66}
+\IfFontExistsTF{Times New Roman}
+  {\defmathfont{tnr}{Times New Roman}{6666CC}}
+  {\defmathfallback{tnr}}
+\defmathfont{tgt}{texgyretermes-regular.otf}{CC66CC}
+
+
+\Nfonts=\numexpr\Nfonts+1\relax
+\begingroup\ExplSyntaxOn
+\newcounter{mtn}\setcounter{mtn}{-1}
+\tl_gput_right:Nn \FINISH { \refstepcounter{mtn}\label{count:mtn} }
+\ExplSyntaxOff\endgroup
+
+\newif\ifMTok
+\def\GateOne#1#2#3{%
+  \expandafter\iffontchar\csname#1\endcsname #3\relax
+    \MToktrue \else \MTokfalse \fi}
+\def\MTbody#1{#1}
+\def\MTcircle{\hbox{\scalebox{.65}{\hbox{\xits\char"25CC}}}}
+\def\MTwidebase{\MTcircle\MTcircle\MTcircle}
+\def\MTRawBody#1#2#3{\Umathchar 0 \csname symMT#1\endcsname #2\relax}
+\def\MTRawMark#1#2{%
+  \hbox{\fontfamily{\csname MTfamily#1\endcsname}\selectfont
+    \ooalign{\hfil\MTcircle\hfil\crcr
+      \hfil\char"00A0\char#2\relax\hfil\crcr}}}
+\ExplSyntaxOn
+\cs_new_protected:Npn \MTRawText #1#2
+  {
+    \bool_lazy_or:nnTF
+      {\int_compare_p:n {"0300 <= #2 <= "036F}}
+      {\int_compare_p:n {"20D0 <= #2 <= "20FF}}
+      {\MTRawMark{#1}{#2}}
+      {\hbox{\use:c {#1}\char#2\scan_stop:}}
+  }
+\ExplSyntaxOff
+\def\SYMC#1#2#3#4{%
+  #4{#1}{#3}%
+  \ifMTok
+    \refstepcounter{#1}%
+    \begingroup
+    \color[HTML]{\csname MTcolour#1\endcsname}%
+    \ifcsname symMT#1\endcsname
+      \Umathcode`x=0 \csname symMT#1\endcsname `x\relax
+      \Umathcode`y=0 \csname symMT#1\endcsname `y\relax
+      \Umathcode`+=2 \csname symMT#1\endcsname `+\relax
+      $\displaystyle\MTRawBody{#1}{#3}{#2}$%
+    \else
+      \MTRawText{#1}{#3}%
+    \fi
+    \endgroup
+  \fi}
+
+\def\ColXITS#1#2{\SYMC{xits}{#1}{#2}{\GateOne{xits}}}
+\def\ColTGM#1#2{\SYMC{tgm}{#1}{#2}{\GateOne{tgm}}}
+\def\ColTGT#1#2{\SYMC{tgt}{#1}{#2}{\GateOne{tgt}}}
+\IfFontExistsTF{Times New Roman}
+  {\def\ColTNR#1#2{\SYMC{tnr}{#1}{#2}{\GateOne{tnr}}}}
+  {\def\ColTNR#1#2{}}
+
+\newcount\MTboxnum
+\newsavebox\MTglyphbox
+\MTboxnum=\allocationnumber
+\def\MTprepare#1#2#3{%
+  \global\setbox\MTglyphbox=\hbox{$\displaystyle\MTbody{#2}$}%
+  \directlua{MTscan("\luaescapestring{#1}", "\luaescapestring{#3}", \the\MTboxnum)}}
+\def\MToutput{%
+  \refstepcounter{mtn}%
+  {\color[HTML]{CC9933}\box\MTglyphbox}}
+\ExplSyntaxOn
+\cs_new_protected:Npn \MTbox #1#2
+  {
+    \str_if_eq:VnTF \MTselected {#1}
+      { { \fboxsep=1.5pt \fbox {#2} } }
+      {#2}
+  }
+\ExplSyntaxOff
+
+\newcommand\FH[2]{{\footnotesize\shortstack{#1\\#2}}}
+\def\INPUT{\input{unicode-math-table.tex}}
+\def\TABLE{%
+\par\noindent
+\setlength\tabcolsep{4pt}%
+\begin{longtable}[l]{@{}l *{\Nfonts}{c} lp{100pt}@{}}
+  \toprule
+  \textsc{usv} &
+  \FH{XITS}{Math} &
+  \FH{TeX Gyre}{Termes Math} &
+  \FH{TeX Gyre}{Termes} &
+  \FH{Times New}{Roman} &
+  \FH{Times}{Math} &
+  Macro & Description \\
+  \midrule \endhead
+  \INPUT\\
+  \bottomrule
+\end{longtable}
+}
+\makeatletter
+\def\USV#1{\footnotesize\scshape\MakeLowercase{u+\@gobble#1}}
+\makeatother
+\def\CMD#1{\footnotesize\cmd#1}
+\def\DESC#1{\vspace{-6pt}%
+  \begin{spacing}{0.5}
+    \RaggedRight\scriptsize #1%
+  \end{spacing}
+}
+
+\newcommand\SHOW[1]{%
+  \def\UnicodeMathSymbol##1##2##3##4{%
+    \def\1{#1}\def\2{##3}%
+    \ifx\1\2\PRINTLINE{##1}{##2}{##3}{##4}\fi
+  }%
+  \TABLE
+}
+\ExplSyntaxOn
+\def\PRINTLINE#1#2#3#4{
+    \MTprepare{#1}{#2}{#3}%
+    \def\tempa{
+      \USV{#1} &
+      \MTbox{xits}{\ColXITS{#2}{#1}} &
+      \MTbox{tgm}{\ColTGM{#2}{#1}} &
+      \MTbox{tgt}{\ColTGT{#2}{#1}} &
+      \MTbox{tnr}{\ColTNR{#2}{#1}} &
+      \MTbox{mtn}{\MToutput} &
+      \CMD{#2}
+      \tl_if_in:NnT \PLAIN {#2}
+        {
+          \makebox[0pt][l]
+            { \color[gray]{0.7} \textsuperscript{\sffamily (p)} }
+        }
+      \tl_if_in:NnT \LTXSYM {#2}
+        {
+          \makebox[0pt][l]
+            { \color[gray]{0.7} \textsuperscript{\sffamily (l)} }
+        }
+      \tl_if_in:NnT \AMSSYMB {#2}
+        {
+          \makebox[0pt][l]
+            { \color[gray]{0.7} \textsuperscript{\sffamily (a)} }
+        }
+      &
+      \DESC{#4} \\
+    }%
+    \expandafter\tempa
+}
+\ExplSyntaxOff
+
+\def\PLAIN{\alpha\beta\gamma\delta\epsilon\zeta\eta\theta\iota\kappa\lambda\mu\nu\xi\pi\rho\sigma\tau\upsilon\phi\chi\psi\omega\varepsilon\vartheta\varpi\varrho\varsigma\varphi\Gamma\Delta\Theta\Lambda\Xi\Pi\Sigma\Upsilon\Phi\Psi\Omega
+%
+\aleph\hbar\imath\jmath\ell\wp\Re\Im\partial\infty\prime\emptyset\nabla\surd\top\bot\angle\triangle\forall\exists\neg\flat\natural\sharp\clubsuit\diamondsuit\heartsuit\spadesuit
+%
+\coprod\bigvee\bigwedge\biguplus\bigcap\bigcup\int\prod\sum\bigotimes\bigoplus\bigodot\oint\bigsqcup\smallint
+%
+\triangleleft\triangleright\bigtriangleup\bigtriangledown\wedge\land\vee\lor\cap\cup\ddagger\dagger\sqcap\sqcup\uplus\amalg\diamond\bullet\wr\div\odot\oslash\otimes\ominus\oplus\mp\pm\circ\bigcirc\setminus\cdot\ast\times\star\propto\sqsubseteq\sqsupseteq\parallel\mid\dashv\vdash\nearrow\searrow\nwarrow\swarrow\Leftrightarrow\Leftarrow\Rightarrow\neq\ne\lnot\leq\le\geq\ge\succ\prec\approx\succeq\preceq\supset\subset\supseteq\subseteq\in\ni\owns\gg\ll\not\leftrightarrow\leftarrow\gets\rightarrow\to\mapstochar\mapsto\sim\simeq\perp\equiv\asymp\smile\frown\leftharpoonup\leftharpoondown\rightharpoonup\rightharpoondown
+%
+\joinrel\relbar\Relbar\lhook\hookrightarrow\rhook\hookleftarrow\bowtie\models\Longrightarrow\longrightarrow\longleftarrow\Longleftarrow\longmapsto\longleftrightarrow\Longleftrightarrow\iff
+%
+\ldotp\cdotp\colon\ldots\cdots\vdots\ddots
+%
+\acute\grave\ddot\tilde\bar\breve\check\hat\vec\dot\widetilde\widehat
+%
+\overrightarrow\overleftarrow\overbrace\underbrace\lmoustache\rmoustache\lgroup\rgroup\arrowvert\Arrowvert\bracevert\Vert\vert\uparrow\downarrow\updownarrow\Uparrow\Downarrow\Updownarrow\backslash\rangle\langle\rbrace\lbrace\rceil\lceil\rfloor\lfloor\sqrt}
+
+\def\LTXSYM{
+\cong
+\notin
+\rightleftharpoons
+\doteq
+\mathring
+}
+
+\def\AMSSYMB{\boxdot\boxplus\boxtimes\square\blacksquare\centerdot\lozenge\blacklozenge\circlearrowright\circlearrowleft\leftrightharpoons\boxminus\Vdash\Vvdash\vDash\twoheadrightarrow\twoheadleftarrow\leftleftarrows\rightrightarrows\upuparrows\downdownarrows\upharpoonright\restriction\downharpoonright\upharpoonleft\downharpoonleft\rightarrowtail\leftarrowtail\leftrightarrows\rightleftarrows\Lsh\Rsh\rightsquigarrow\leftrightsquigarrow\looparrowleft\looparrowright\circeq\succsim\gtrsim\gtrapprox\multimap\therefore\because\doteqdot\Doteq\triangleq\precsim\lesssim\lessapprox\eqslantless\eqslantgtr\curlyeqprec\curlyeqsucc\preccurlyeq\leqq\leqslant\lessgtr\backprime\risingdotseq\fallingdotseq\succcurlyeq\geqq\geqslant\gtrless\vartriangleright\vartriangleleft\trianglerighteq\trianglelefteq\bigstar\between\blacktriangledown\blacktriangleright\blacktriangleleft\vartriangle\blacktriangle\triangledown\eqcirc\lesseqgtr\gtreqless\lesseqqgtr\gtreqqless\Rrightarrow\Lleftarrow\veebar\barwedge\doublebarwedge\measuredangle\sphericalangle\varpropto\smallsmile\smallfrown\Subset\Supset\Cup\doublecup\Cap\doublecap\curlywedge\curlyvee\leftthreetimes\rightthreetimes\subseteqq\supseteqq\bumpeq\Bumpeq\lll\llless\ggg\gggtr\circledS\pitchfork\dotplus\backsim\backsimeq\complement\intercal\circledcirc\circledast\circleddash\lvertneqq\gvertneqq\nleq\ngeq\nless\ngtr\nprec\nsucc\lneqq\gneqq\nleqslant\ngeqslant\lneq\gneq\npreceq\nsucceq\precnsim\succnsim\lnsim\gnsim\nleqq\ngeqq\precneqq\succneqq\precnapprox\succnapprox\lnapprox\gnapprox\nsim\ncong\diagup\diagdown\varsubsetneq\varsupsetneq\nsubseteqq\nsupseteqq\subsetneqq\supsetneqq\varsubsetneqq\varsupsetneqq\subsetneq\supsetneq\nsubseteq\nsupseteq\nparallel\nmid\nshortmid\nshortparallel\nvdash\nVdash\nvDash\nVDash\ntrianglerighteq\ntrianglelefteq\ntriangleleft\ntriangleright\nleftarrow\nrightarrow\nLeftarrow\nRightarrow\nLeftrightarrow\nleftrightarrow\divideontimes\varnothing\nexists\Finv\Game\eth\eqsim\beth\gimel\daleth\lessdot\gtrdot\ltimes\rtimes\shortmid\shortparallel\smallsetminus\thicksim\thickapprox\approxeq\succapprox\precapprox\curvearrowleft\curvearrowright\digamma\varkappa\Bbbk\hslash\backepsilon}
+
+\directlua{
+  local function mtkey(n)
+    local f = font.getfont(n.font)
+    if not f then return nil, 0 end
+    local name = string.lower(tostring(f.filename))
+    local key = nil
+    if string.find(name, "times-math-integrals", 1, true) then key = "mtn"
+    elseif string.find(name, "times new roman", 1, true) then key = "tnr"
+    elseif string.find(name, "texgyretermes-math", 1, true) then key = "tgm"
+    elseif string.find(name, "texgyretermes", 1, true) then key = "tgt"
+    elseif string.find(name, "xitsmath", 1, true) then key = "xits" end
+    return key, f.size or 0
+  end
+  function MTscan(target, class, boxnum)
+    local want = tonumber(string.gsub(target, '"', ''), 16)
+    local exact, best, bestsize = nil, nil, -1
+    local function walk(head)
+      local n = head
+      while n do
+        if n.id == node.id("glyph") then
+          local key, size = mtkey(n)
+          if key then
+            if want and n.char == want and not exact then exact = key end
+            if size > bestsize then bestsize = size; best = key end
+          end
+        elseif n.id == node.id("hlist") or n.id == node.id("vlist") then
+          walk(n.head)
+        end
+        n = n.next
+      end
+    end
+    walk(tex.box[boxnum])
+    local sel = exact
+    if sel == nil then sel = best end
+    token.set_macro("MTselected", sel or "", "global")
+  end
+}
+
+\begin{document}
+\MakeShortVerb\|
+\title{Times Math\\[.3ex]\large Glyph reference}
+\author{Junhao Wu}
+\date{2026-10-17 \quad v0.1a}
+\maketitle
+
+This reference reads \texttt{unicode-math-table.tex} and groups its entries
+by mathematical class and alphabet. Each row gives the Unicode scalar
+value (USV), font samples, command name and description.
+
+\begin{center}
+\begin{tabular}{@{}lr@{}}
+\toprule
+Font or setup & Entries shown\\
+\midrule
+XITS Math, default features & \ref{count:xits}\\
+TeX Gyre Termes Math & \ref{count:tgm}\\
+TeX Gyre Termes, raw & \ref{count:tgt}\\
+Times New Roman, raw & \ref{count:tnr}\\
+\texttt{times-math} package output & \ref{count:mtn}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The first four columns require the listed codepoint in the font's cmap;
+an unavailable glyph leaves a blank cell. Counts refer to shown table
+entries, including repeated codepoints. The Times Math column uses the
+package's font ranges and alphabet mappings, including the bundled integral
+font. If Times New Roman is unavailable, that column uses the mathematical
+fonts.
+
+A frame marks the font that supplies the glyph in the Times Math column.
+The sixteen supplementary integrals have no source column, so their frames
+appear in the Times Math column itself.
+
+For comparison, the Times Math column uses \texttt{math-style=literal} and
+\texttt{bold-style=literal}. Ordinary documents follow their own style
+settings. The markers {\color[gray]{0.6}\textsuperscript{\sffamily (p)}},
+{\color[gray]{0.6}\textsuperscript{\sffamily (l)}} and
+{\color[gray]{0.6}\textsuperscript{\sffamily (a)}} identify command names
+also used by Plain \TeX, \LaTeX\ and \textsf{amssymb}, respectively.
+
+Accents use a common dotted-circle base (U+25CC) from XITS Math.
+The TeX Gyre Termes and Times New Roman columns show text-font marks with a
+single circle. The XITS Math, TeX Gyre Termes Math and Times Math columns
+show mathematical attachment and stretching, using three circles for wide
+examples.
+
+This listing is derived from \textsf{unicode-math}'s
+\texttt{unimath-symbols} document (Will Robertson et al.) as adapted by
+\texttt{euler-math}, using per-font glyph checks and counts.
+
+\tableofcontents
+
+\clearpage
+\section{Opening symbols, \cmd\mathopen}
+\begingroup
+\def\sqrt{\sqrtsign{}}
+\def\cuberoot{\cuberootsign{}}
+\def\fourthroot{\fourthrootsign{}}
+\def\longdivision{\longdivisionsign{}}
+\SHOW\mathopen
+\endgroup
+
+\section{Closing symbols, \cmd\mathclose}
+\SHOW\mathclose
+
+\section{Fence symbols, \cmd\mathfence}
+\SHOW\mathfence
+
+\section{Punctuation symbols, \cmd\mathpunct}
+\SHOW\mathpunct
+
+\clearpage
+\section{`Over' symbols, \cmd\mathover}
+\begingroup
+\def\MTbody#1{#1{\MTwidebase}}
+\def\MTRawBody#1#2#3{\Umathaccent 0 \csname symMT#1\endcsname #2\relax{{}\MTwidebase}}
+\SHOW\mathover
+\endgroup
+
+\section{`Under' symbols, \cmd\mathunder}
+\begingroup
+\def\MTbody#1{#1{\MTwidebase}}
+\def\MTRawBody#1#2#3{\Umathaccent bottom 0 \csname symMT#1\endcsname #2\relax{{}\MTwidebase}}
+\SHOW\mathunder
+\endgroup
+
+\section{Accents, \cmd\mathaccent}
+
+The dotted circle marks the base position. The Times Math column uses the
+ordinary top accents selected by \texttt{times-math}.
+
+\begingroup
+\def\MTbody#1{#1{\MTcircle}}
+\def\MTRawBody#1#2#3{\Umathaccent fixed 0 \csname symMT#1\endcsname #2\relax{\MTcircle}}
+\SHOW\mathaccent
+\endgroup
+
+\section{Accents wide, \cmd\mathaccentwide}
+\begingroup
+\def\MTbody#1{#1{\MTwidebase}}
+\def\MTRawBody#1#2#3{\Umathaccent 0 \csname symMT#1\endcsname #2\relax{\MTwidebase}}
+\SHOW\mathaccentwide
+\endgroup
+
+\clearpage
+\section{Bottom accents, \cmd\mathbotaccent}
+\begingroup
+\def\MTbody#1{#1{\MTcircle}}
+\def\MTRawBody#1#2#3{\Umathaccent bottom fixed 0 \csname symMT#1\endcsname #2\relax{\MTcircle}}
+\SHOW\mathbotaccent
+\endgroup
+
+\section{Bottom accents wide, \cmd\mathbotaccentwide}
+\begingroup
+\def\MTbody#1{#1{\MTwidebase}}
+\def\MTRawBody#1#2#3{\Umathaccent bottom 0 \csname symMT#1\endcsname #2\relax{\MTwidebase}}
+\SHOW\mathbotaccentwide
+\endgroup
+
+\section{Overlay accents, \cmd\mathaccentoverlay}
+\begingroup
+\def\MTbody#1{#1{\MTcircle}}
+\let\MTRawBody\MTRawOverlay
+\def\MTRawText#1#2{%
+  \hbox{\fontfamily{\csname MTfamily#1\endcsname}\selectfont
+    \ooalign{\hfil\MTcircle\hfil\crcr\hfil\char#2\relax\hfil\crcr}}}
+\SHOW\mathaccentoverlay
+\endgroup
+
+\section{Big operators, \cmd\mathop}
+
+The math-font and Times Math columns include limits, following
+\textsf{unicode-math}'s \cmd\nolimits\ settings. The text-font columns
+show the source glyph without mathematical resizing or limits.
+In the Times Math column, integrals absent from Termes come from the bundled
+Times Math Integrals font, constructed from Termes outlines with native
+MATH size variants and script metrics.
+\begingroup
+\def\MTbody#1{#1_0^1}
+\let\MTRawBody\MTRawOperator
+\SHOW\mathop
+\endgroup
+
+\section{Binary relations, \cmd\mathbin}
+\SHOW\mathbin
+
+\section{Ordinary symbols, \cmd\mathord}
+\SHOW\mathord
+
+\clearpage
+\section{Relation symbols, \cmd\mathrel}
+\SHOW\mathrel
+
+\clearpage
+\section{Alphabetical symbols, \cmd\mathalpha}
+
+\ExplSyntaxOn
+\cs_set:Npn \UnicodeMathSymbol #1#2#3#4 {
+  \str_if_eq:nnT {\mathalpha} {#3} {
+    \exp_not:n { \UnicodeMathSymbol {#1}{#2}{#3}{#4} }
+  }
+}
+\CatchFileEdef
+  \ALPHA{unicode-math-table.tex}
+  {\char_set_catcode_space:N \ }
+
+
+\def\INPUT{\ALPHA}
+\cs_new:Npn \SLOTS #1#2 {
+  \cs_set:Npn \UnicodeMathSymbol ##1##2##3##4 {
+    \bool_lazy_and:nnT
+      { \int_compare_p:n {##1 >= #1} }
+      { \int_compare_p:n {##1 <= #2} }
+      {
+        \PRINTLINE{##1}{##2}{##3}{##4}
+      }
+  }
+  \TABLE
+  \cs_set:Npn \UnicodeMathSymbol ##1##2##3##4 {
+    \bool_lazy_or:nnT
+      { \int_compare_p:n {##1 > #2} }
+      { \int_compare_p:n {##1 < #1} }
+      {
+        \exp_not:n { \UnicodeMathSymbol {##1}{##2}{##3}{##4} }
+      }
+  }
+  \edef\ALPHA{\ALPHA}
+}
+
+\ExplSyntaxOff
+
+\subsection{Normal weight}
+
+\subsubsection{Upright Greek, uppercase}
+\SLOTS{"00391}{"003A9}
+
+\subsubsection{Upright Greek, lowercase}
+\SLOTS{"003B1}{"003F5}
+
+\subsubsection{Italic, Latin, uppercase}
+\SLOTS{"1D434}{"1D44D}
+
+\subsubsection{Italic, Latin, lowercase}
+\SLOTS{"1D44E}{"1D467}
+
+\subsubsection{Italic Greek, uppercase}
+\SLOTS{"1D6E2}{"1D6FA}
+
+\subsubsection{Italic Greek, lowercase}
+\SLOTS{"1D6FC}{"1D71B}
+
+\subsubsection{Script, Latin, uppercase}
+\SLOTS{"1D49C}{"1D4B5}
+
+\subsubsection{Script, Latin, lowercase}
+\SLOTS{"1D4B6}{"1D4CF}
+
+\subsubsection{Fraktur, Latin, uppercase}
+\SLOTS{"1D504}{"1D51C}
+
+\subsubsection{Fraktur, Latin, lowercase}
+\SLOTS{"1D51E}{"1D537}
+
+\subsubsection{Blackboard, Latin, uppercase}
+\SLOTS{"1D538}{"1D550}
+
+\subsubsection{Blackboard, Latin, lowercase}
+\SLOTS{"1D552}{"1D56B}
+
+\subsubsection{Sans serif, Latin, uppercase}
+\SLOTS{"1D5A0}{"1D5B9}
+
+\subsubsection{Sans serif, Latin, lowercase}
+\SLOTS{"1D5BA}{"1D5D3}
+
+\subsubsection{Italic sans serif, Latin, uppercase}
+\SLOTS{"1D608}{"1D621}
+
+\subsubsection{Italic sans serif, Latin, lowercase}
+\SLOTS{"1D622}{"1D63B}
+
+\subsubsection{Typewriter, Latin, uppercase}
+\SLOTS{"1D670}{"1D689}
+
+\subsubsection{Typewriter, Latin, lowercase}
+\SLOTS{"1D68A}{"1D6A3}
+
+\subsection{Bold}
+
+\subsubsection{Bold, Latin, uppercase}
+\SLOTS{"1D400}{"1D419}
+
+\subsubsection{Bold, Latin, lowercase}
+\SLOTS{"1D41A}{"1D433}
+
+\subsubsection{Bold Greek, uppercase}
+\SLOTS{"1D6A8}{"1D6C0}
+
+\subsubsection{Bold Greek, lowercase}
+\SLOTS{"1D6C2}{"1D6E1}
+
+\subsubsection{Bold italic, Latin, uppercase}
+\SLOTS{"1D468}{"1D481}
+
+\subsubsection{Bold italic, Latin, lowercase}
+\SLOTS{"1D482}{"1D49B}
+
+\subsubsection{Bold italic Greek, uppercase}
+\SLOTS{"1D71C}{"1D734}
+
+\subsubsection{Bold italic Greek, lowercase}
+\SLOTS{"1D736}{"1D755}
+
+\subsubsection{Bold script, Latin, uppercase}
+\SLOTS{"1D4D0}{"1D4E9}
+
+\subsubsection{Bold script, Latin, lowercase}
+\SLOTS{"1D4EA}{"1D503}
+
+\subsubsection{Bold fraktur, Latin, uppercase}
+\SLOTS{"1D56C}{"1D585}
+
+\subsubsection{Bold fraktur, Latin, lowercase}
+\SLOTS{"1D586}{"1D59F}
+
+\subsubsection{Bold sans serif, Latin, uppercase}
+\SLOTS{"1D5D4}{"1D5ED}
+
+\subsubsection{Bold sans serif, Latin, lowercase}
+\SLOTS{"1D5EE}{"1D607}
+
+\subsubsection{Bold italic sans serif, Latin, uppercase}
+\SLOTS{"1D63C}{"1D655}
+
+\subsubsection{Bold italic sans serif, Latin, lowercase}
+\SLOTS{"1D656}{"1D66F}
+
+\subsubsection{Bold sans serif Greek, uppercase}
+\SLOTS{"1D756}{"1D76E}
+
+\subsubsection{Bold sans serif Greek, lowercase}
+\SLOTS{"1D770}{"1D78F}
+
+\subsubsection{Bold italic sans serif Greek, uppercase}
+\SLOTS{"1D790}{"1D7A8}
+
+\subsubsection{Bold italic sans serif Greek, lowercase}
+\SLOTS{"1D7AA}{"1D7C9}
+
+\subsection{Miscellaneous}
+\def\UnicodeMathSymbol#1#2#3#4{\PRINTLINE{#1}{#2}{#3}{#4}}
+\TABLE
+
+\FINISH
+\mbox{}
+\end{document}
+
+\endinput

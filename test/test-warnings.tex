@@ -1,0 +1,19 @@
+\documentclass{article}
+\usepackage{fontspec,mathrsfs}
+\ExplSyntaxOn
+\cs_new_eq:NN \__test_font_exists:nTF \IfFontExistsTF
+\RenewDocumentCommand \IfFontExistsTF { m +m +m }
+  {
+    \str_if_eq:eeTF {#1} { Times~New~Roman }
+      {#3}
+      { \__test_font_exists:nTF {#1} {#2} {#3} }
+  }
+\ExplSyntaxOff
+\usepackage{times-math}
+\ExplSyntaxOn
+\bool_if:NT \l__mt_text_layer_bool
+  { \PackageError{test-warnings}{Missing~text~font~layer~was~enabled}{} }
+\ExplSyntaxOff
+\begin{document}
+$\mathrm{A}+\alpha+\mathscr{L}+\fint_0^1$.
+\end{document}

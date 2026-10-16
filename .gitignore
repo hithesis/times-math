@@ -1,0 +1,16 @@
+/times-math.sty
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.toc
+*.out
+*.pdf
+*.synctex.gz
+*.xdv
+*.zip
+/build/
+/dist/
+/test/output/
+__pycache__/
+.DS_Store

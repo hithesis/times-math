@@ -1,0 +1,31 @@
+\usepackage{array,booktabs}
+\usepackage[margin=25mm]{geometry}
+\usepackage{fontspec}
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}}
+  {\setmainfont{TeX Gyre Termes}}
+\setsansfont{TeX Gyre Heros}[Scale=MatchLowercase]
+\setmonofont{Latin Modern Mono}[Scale=MatchLowercase]
+\usepackage{times-math}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{
+  pdftitle={Times Math},
+  pdfauthor={\ifchinese 吴俊豪\else Junhao Wu\fi},
+  bookmarksopen,
+  colorlinks,
+  allcolors=blue!45!black
+}
+\setkomafont{title}{\normalfont\LARGE}
+\setkomafont{author}{\normalfont\normalsize}
+\setkomafont{date}{\normalfont\normalsize}
+\setlength{\emergencystretch}{3em}
+\newlength\docblockparindent
+\newenvironment{docblock}
+  {\par\addvspace{\medskipamount}\noindent
+   \setlength{\docblockparindent}{\parindent}%
+   \begin{minipage}{\linewidth}%
+   \setlength{\parindent}{\docblockparindent}}
+  {\end{minipage}\par\addvspace{\medskipamount}}
+\pagestyle{plain}

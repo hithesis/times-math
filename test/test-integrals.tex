@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage{times-math}
+\usepackage{booktabs}
+\usepackage[margin=20mm]{geometry}
+\setlength{\parindent}{0pt}
+\makeatletter
+\newcommand\checkintegral[2]{%
+  \setbox0=\hbox{$\m@th#1\int$}%
+  \setbox2=\hbox{$\m@th#1#2$}%
+  \dimen0=\dimexpr\ht2+\dp2-\ht0-\dp0\relax
+  \dimen2=.02pt
+  \ifx#2\upint \dimen2=.15\dimexpr\ht0+\dp0\relax\fi
+  \ifx#2\lowint \dimen2=.15\dimexpr\ht0+\dp0\relax\fi
+  \ifdim\dimen0<-.02pt
+    \PackageError{test-integrals}{Integral curve is too short for \string#2}{}%
+  \fi
+  \ifdim\dimen0>\dimen2
+    \PackageError{test-integrals}{Height mismatch for \string#2}{}%
+  \fi
+  \dimen0=\dimexpr\ht0-\dp0-\ht2+\dp2\relax
+  \ifdim\dimen0<0pt \dimen0=-\dimen0\fi
+  \ifdim\dimen0>\dimen2
+    \PackageError{test-integrals}{Axis mismatch for \string#2}{}%
+  \fi}
+\makeatother
+\newcommand\integralrow[1]{%
+  \checkintegral{\displaystyle}{#1}%
+  \checkintegral{\textstyle}{#1}%
+  \checkintegral{\scriptstyle}{#1}%
+  \checkintegral{\scriptscriptstyle}{#1}%
+  \texttt{\string#1} &
+  $\int_0^1 f(x)\,dx$ & $#1_0^1 f(x)\,dx$ &
+  $\displaystyle\int_0^1 f(x)\,dx$ &
+  $\displaystyle#1_0^1 f(x)\,dx$\\[3pt]}
+\begin{document}
+\section*{Termes integrals with native OTF supplements}
+\smallskip
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Command & Termes inline & Supplement inline & Termes display & Supplement display\\
+\midrule
+\integralrow{\sumint}
+\integralrow{\intbar}
+\integralrow{\intBar}
+\integralrow{\fint}
+\integralrow{\cirfnint}
+\integralrow{\rppolint}
+\integralrow{\scpolint}
+\integralrow{\npolint}
+\integralrow{\pointint}
+\integralrow{\sqint}
+\integralrow{\intlarhk}
+\integralrow{\intx}
+\integralrow{\intcap}
+\integralrow{\intcup}
+\integralrow{\upint}
+\integralrow{\lowint}
+\bottomrule
+\end{tabular}
+\par\bigskip
+\checkintegral{\displaystyle}{⨍}
+\checkintegral{\textstyle}{⨍}
+{\Large
+  \checkintegral{\displaystyle}{\intbar}%
+  \checkintegral{\textstyle}{\pointint}%
+  \checkintegral{\scriptstyle}{\sqint}%
+  \checkintegral{\scriptscriptstyle}{⨍}}
+$\displaystyle\intbar\limits_0^1\quad\intBar\nolimits_0^1\quad
+ \fint\displaylimits_0^1\quad
+ A_{\pointint_0^1 f}\quad B^{\sqint_0^1 f}\quad
+ \int+\iint+\oint+\iiiint+\awint$
+\end{document}

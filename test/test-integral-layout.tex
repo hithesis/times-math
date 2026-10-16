@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage{times-math,xcolor}
+\usepackage[paperwidth=100pt,paperheight=70pt,margin=5pt]{geometry}
+\definecolor{layoutoperator}{rgb}{0,1,0}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\ExplSyntaxOn
+\int_new:N \g__layout_case_int
+\cs_new_protected:Npn \layout_formula:NNn #1#2#3
+  {
+    \hbox{\tex_mathsurround:D=0pt $#1
+      \color{blue}\int\quad
+      \color{layoutoperator}#2#3$}
+  }
+\cs_new_protected:Npn \layout_case:NnNnn #1#2#3#4#5
+  {
+    \clearpage
+    \int_gincr:N \g__layout_case_int
+    \iow_term:x {INTEGRAL-LAYOUT|\int_use:N\g__layout_case_int|\cs_to_str:N#1|#2|#4|#5}
+    {\normalfont\fontsize{6}{7}\selectfont\ttfamily
+      \cs_to_str:N#1 / #4 / #2 / #5\par}
+    \medskip
+    {\fontsize{#2}{\fp_eval:n{1.2*#2}}\selectfont
+      \str_case:nn {#5}
+        {
+          {sub}{\layout_formula:NNn #3#1{\sb{\color{red}0}}}
+          {sup}{\layout_formula:NNn #3#1{\sp{\color{red}1}}}
+          {both}{\layout_formula:NNn #3#1{\sb{\color{red}0}\sp{\color{red}1}}}
+          {limits}{\layout_formula:NNn #3#1{\limits\sb{\color{red}0}\sp{\color{red}1}}}
+        }}
+  }
+\cs_new_protected:Npn \layout_style:NnNn #1#2#3#4
+  {
+    \clist_map_inline:nn {sub,sup,both,limits}
+      {\layout_case:NnNnn #1{#2}#3{#4}{##1}}
+  }
+\cs_new_protected:Npn \layout_operator:N #1
+  {
+    \clist_map_inline:nn {10,12}
+      {
+        \layout_style:NnNn #1{##1}\displaystyle{D}
+        \layout_style:NnNn #1{##1}\textstyle{T}
+        \layout_style:NnNn #1{##1}\scriptstyle{S}
+        \layout_style:NnNn #1{##1}\scriptscriptstyle{SS}
+      }
+  }
+\ExplSyntaxOff
+\begin{document}
+\ExplSyntaxOn
+\clist_map_function:nN
+  {\sumint,\intbar,\intBar,\fint,\cirfnint,\rppolint,\scpolint,\npolint,
+   \pointint,\sqint,\intlarhk,\intx,\intcap,\intcup,\upint,\lowint}
+  \layout_operator:N
+\ExplSyntaxOff
+\end{document}

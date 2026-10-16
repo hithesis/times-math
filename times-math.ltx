@@ -1,0 +1,627 @@
+\newcommand*{\cmd}[1]{{\normalfont\ttfamily\textbackslash{}#1}}
+\newcommand*{\pkg}[1]{{\normalfont\ttfamily#1}}
+\newcommand*{\file}[1]{{\normalfont\ttfamily#1}}
+\newcommand*{\opt}[1]{{\normalfont\ttfamily#1}}
+
+\title{\texttt{times-math}\\[.3ex]
+  \large\ifchinese Times New Roman 数学排版\else Mathematics with Times New Roman\fi}
+\author{\ifchinese 吴俊豪\else Junhao Wu\fi}
+\date{v0.1a\quad 2026-10-17\\[.5ex]
+  \normalsize\url{https://github.com/hithesis/times-math}}
+
+\begin{document}
+\maketitle
+
+\section{\ifchinese 简介\else Introduction\fi}
+
+\ifchinese
+\pkg{times-math} 使 Times New Roman 用于数学排版成为可能。
+它采用 Times New Roman 的字母、数字和适用的数学符号，
+由 TeX Gyre Termes Math、附带的 Times Math Integrals 和 XITS Math
+补足数学排版能力与其余字形。
+\else
+\pkg{times-math} makes it possible to use Times New Roman for mathematics.
+It uses Times New Roman letters, digits and suitable symbols, with
+TeX Gyre Termes Math, the bundled Times Math Integrals font and XITS Math
+supplying mathematical layout and the remaining glyphs.
+\fi
+
+\ifchinese
+Times New Roman 不含 OpenType MATH 表。
+排版参数、可增长的定界符、大算符和重音由数学字体提供。
+本包基于 \pkg{unicode-math}，使用 LuaLaTeX 或 XeLaTeX 编译。
+\else
+Times New Roman has no OpenType MATH table. Math fonts provide layout
+parameters, growing delimiters, large operators and accents.
+The package uses \pkg{unicode-math} and requires LuaLaTeX or XeLaTeX.
+\fi
+
+\section{\ifchinese 安装与使用\else Installation and usage\fi}
+\label{sec-install}
+
+\ifchinese
+从源码提取包文件：
+\else
+Extract the package file from the sources:
+\fi
+
+\begin{verbatim}
+xetex times-math.ins
+\end{verbatim}
+
+\ifchinese
+将生成的 \file{times-math.sty} 与附带的 \file{times-math-integrals.otf}
+一起放在文档目录，即可使用。安装到用户 TEXMF 树可执行：
+\else
+Place the extracted \file{times-math.sty} and the bundled
+\file{times-math-integrals.otf} beside your document. To install both
+in your user TEXMF tree, run:
+\fi
+
+\begin{verbatim}
+l3build install
+\end{verbatim}
+
+\ifchinese
+手动安装时，两类文件分别放入以下位置：
+\else
+For a manual TEXMF installation, use these locations:
+\fi
+
+\begin{verbatim}
+tex/latex/times-math/times-math.sty
+fonts/opentype/public/times-math/times-math-integrals.otf
+\end{verbatim}
+
+\ifchinese
+Times New Roman 需自行安装；TeX Gyre Termes Math 和 XITS Math 随
+\TeX{} Live 提供。补充 OTF 已附带，无需为日常排版重新生成。
+\else
+Install Times New Roman separately. TeX Gyre Termes Math and XITS Math
+are available in \TeX{} Live. The supplementary OTF is included and
+does not need rebuilding for normal use.
+\fi
+
+\begin{docblock}
+\subsection{\ifchinese 最小示例\else Minimal example\fi}
+\label{sec-usage}
+
+\begin{verbatim}
+\documentclass{article}
+\usepackage{times-math}
+\begin{document}
+$E=mc^2$, $\alpha+\beta=\gamma$, $\mathbb{R}$.
+\[
+  \sum_{i=1}^{n} i = \frac{n(n+1)}{2}
+\]
+\end{document}
+\end{verbatim}
+\end{docblock}
+
+\begin{docblock}
+\ifchinese\indent\fi
+\ifchinese
+\pkg{amsmath} 和 \pkg{unicode-math} 会自动加载。
+本包只设置数学字体，不修改正文、无衬线或等宽文字字体。
+正文也要用 Times New Roman 时，另行设置：
+\else
+\pkg{amsmath} and \pkg{unicode-math} are loaded automatically.
+The package sets math fonts only; it does not change the document's
+roman, sans-serif or monospaced text fonts. To use Times New Roman for
+the body text as well, add:
+\fi
+
+\begin{verbatim}
+\setmainfont{Times New Roman}
+\end{verbatim}
+\end{docblock}
+
+\ifchinese
+系统没有 Times New Roman 时，本包会警告并跳过文字字体层。
+也可显式选用 TeX Gyre Termes，详见第~\ref{sec-text-font}~节。
+\else
+If Times New Roman is unavailable, the package warns and omits the
+text-font layer. You can explicitly select TeX Gyre Termes;
+see section~\ref{sec-text-font}.
+\fi
+
+\section{\ifchinese 字形与数学排版\else Glyphs and mathematical layout\fi}
+
+\ifchinese
+默认字体配置如下。
+\else
+The default font roles are:
+\fi
+
+\begin{center}
+\begin{tabular}{@{}p{.30\linewidth}p{.63\linewidth}@{}}
+\toprule
+\ifchinese 字体\else Font\fi & \ifchinese 用途\else Role\fi\\
+\midrule
+Times New Roman &
+\ifchinese
+字母、数字及已有符号；变量使用相应斜体或粗斜体字面。
+\else
+Letters, digits and available symbols, including italic and bold
+italic faces for variables.
+\fi\\[.6ex]
+TeX Gyre Termes Math &
+\ifchinese
+补充符号、黑板体等数学字母表，以及定界符、大算符和根式。
+\else
+Additional symbols and alphabets, delimiters, large operators
+and radicals.
+\fi\\[.6ex]
+Times Math Integrals &
+\ifchinese
+由 Termes 曲线和符号构件组合的补充积分号，随包附带。
+\else
+Sixteen additional integrals composed from Termes outlines.
+\fi\\[.6ex]
+XITS Math &
+\ifchinese
+数学排版参数、重音，以及其他字体仍缺少的字形。
+\else
+Mathematical layout parameters, accents and the remaining fallback
+glyphs.
+\fi\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\ifchinese
+预先生成的字符区间决定文字字形的覆盖范围。
+定界符、大算符和重音使用数学字体的尺寸变体、拼接字形与定位数据。
+\else
+Generated character ranges select the text-like glyphs. Delimiters,
+large operators and accents use math fonts for size variants, glyph
+assemblies and attachment.
+\fi
+
+\subsection{\ifchinese 变量与数学字母表\else Variables and mathematical alphabets\fi}
+
+\ifchinese
+变量沿用 \pkg{unicode-math} 的数学样式规则。
+Times New Roman 的斜体变量和粗斜体变量使用相应的 Italic、Bold Italic 字面。
+下面的公式同时包含斜体变量、上下标、正体标签和粗体字母：
+\else
+Variables follow the mathematical-style rules of \pkg{unicode-math}.
+Times New Roman italic and bold italic variables use its Italic and
+Bold Italic faces.
+The following examples combine italic variables, scripts, upright
+labels and bold letters:
+\fi
+
+\[
+  E=mc^2,\qquad x_{i,j}^{(k)},\qquad
+  \rho_{\mathrm{e}},\qquad \mathbf{A}\mathbf{x}=\mathbf{b}.
+\]
+
+\ifchinese
+黑板体、花体和哥特体等使用数学字体中的专用字形。
+\cmd{mathbb} 的数字也可使用，例如 $\mathbb{1}$ 和 $\mathbb{0}$。
+\else
+Blackboard bold, script and Fraktur use the dedicated glyphs in the
+math fonts. Digits are available with \cmd{mathbb}, for example
+$\mathbb{1}$ and $\mathbb{0}$.
+\fi
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\ifchinese 命令\else Command\fi & \ifchinese 示例\else Example\fi\\
+\midrule
+\cmd{mathbb} & $\mathbb{R}\;\mathbb{N}\;\mathbb{C}\;\mathbb{0123456789}$\\
+\cmd{mathcal}, \cmd{mathscr} & $\mathcal{L}\;\mathcal{F}\;\mathscr{S}$\\
+\cmd{mathfrak} & $\mathfrak{g}\;\mathfrak{sl}\;\mathfrak{A}$\\
+\cmd{mathsf}, \cmd{mathtt} & $\mathsf{ABCxyz}\;\mathtt{ABCxyz}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{docblock}
+\subsection{\ifchinese 重音、定界符与大算符\else Accents, delimiters and large operators\fi}
+
+\begin{verbatim}
+\hat{x}, \bar{H}, \vec{v}, \dot{x},
+\widehat{ABC}, \overrightarrow{AB}
+\end{verbatim}
+\[
+  \hat{x},\quad \bar{H},\quad \vec{v},\quad \dot{x},\quad
+  \widehat{ABC},\quad \overrightarrow{AB}.
+\]
+\par
+\end{docblock}
+
+\begin{docblock}
+\ifchinese
+\cmd{left} 与 \cmd{right} 根据内容选择定界符的大小；
+根号和大算符也使用数学字体的尺寸变体。
+\else
+\cmd{left} and \cmd{right} select delimiters to fit their contents;
+radicals and large operators likewise use the math fonts' size
+variants.
+\fi
+
+\[
+  \left(\frac{a+b}{c}\right)^2,\qquad
+  \sqrt{x^2+y^2},\qquad
+  \sum_{i=1}^{n}i,\qquad
+  \int_0^1 f(x)\,\mathrm{d}x.
+\]
+\end{docblock}
+
+\ifchinese
+宽重音和上下括号仍按通常的命令使用：
+\else
+Wide accents and horizontal braces use the usual commands:
+\fi
+\[
+  \widetilde{ABC},\quad
+  \overbrace{a+b+c}^{3},\quad
+  \underbrace{a+b+\cdots+z}_{26}.
+\]
+
+\begin{docblock}
+\subsection{\ifchinese 补充积分号字体\else Supplementary integral font\fi}
+\label{sec-integrals}
+
+\ifchinese
+随包附带的 Times Math Integrals 使用 Termes 的积分曲线和符号构件，
+补充下表中的 16 个积分号。字体记录了 7 档数学尺寸变体和脚标边距，
+由数学引擎直接选择。上下横线等装饰会增加少量上下范围。
+\else
+Times Math Integrals supplies the sixteen operators below, composed from
+Termes outlines. Its MATH table records seven sizes and script metrics;
+bars can add a small vertical extent.
+\fi
+
+\begin{center}
+\begingroup
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}llllllll@{}}
+\toprule
+\multicolumn{8}{@{}l@{}}{\ifchinese 命令与字形\else Commands and glyphs\fi}\\
+\midrule
+\cmd{sumint} & $\sumint$ & \cmd{intbar} & $\intbar$ & \cmd{intBar} & $\intBar$ & \cmd{fint} & $\fint$\\
+\cmd{cirfnint} & $\cirfnint$ & \cmd{rppolint} & $\rppolint$ & \cmd{scpolint} & $\scpolint$ & \cmd{npolint} & $\npolint$\\
+\cmd{pointint} & $\pointint$ & \cmd{sqint} & $\sqint$ & \cmd{intlarhk} & $\intlarhk$ & \cmd{intx} & $\intx$\\
+\cmd{intcap} & $\intcap$ & \cmd{intcup} & $\intcup$ & \cmd{upint} & $\upint$ & \cmd{lowint} & $\lowint$\\
+\bottomrule
+\end{tabular}
+\endgroup
+\end{center}
+\end{docblock}
+
+\[
+  \int_0^1 f(x)\,\mathrm{d}x,\qquad
+  \fint_0^1 f(x)\,\mathrm{d}x,\qquad
+  \lowint_0^1 f(x)\,\mathrm{d}x.
+\]
+
+\ifchinese
+加载 \pkg{times-math} 后即可使用这些命令，也可直接输入相应的 Unicode 字符。
+只需要补充字体时，可在 \pkg{unicode-math} 文档中单独加载：
+\else
+These commands and their Unicode characters are available after loading
+\pkg{times-math}. To use the font independently, load it as a range
+supplement in a \pkg{unicode-math} document:
+\fi
+
+\begin{verbatim}
+\usepackage{unicode-math}
+\setmathfont{TeX Gyre Termes Math}
+\setmathfont{times-math-integrals.otf}[
+  range={"2A0B,"2A0D-"2A10,"2A12-"2A1C}]
+\end{verbatim}
+
+\section{\ifchinese 选项\else Options\fi}
+
+\begin{docblock}
+\subsection{\opt{text-font}}
+\label{sec-text-font}
+
+\ifchinese
+下表列出可用配置。
+TeX Gyre Termes 文字字体随 \TeX{} Live 分发。
+\else
+The table lists the available configurations.
+The TeX Gyre Termes text font is distributed with \TeX{} Live.
+\fi
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\ifchinese 取值\else Value\fi & \ifchinese 说明\else Description\fi\\
+\midrule
+\opt{Times New Roman} & \ifchinese 默认配置\else Default configuration\fi\\
+\opt{TeX Gyre Termes} & \ifchinese \TeX{} Live 提供的文字字体\else Text font supplied by \TeX{} Live\fi\\
+\opt{none} & \ifchinese 关闭文字字体层\else Disable the text-font layer\fi\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{verbatim}
+\usepackage[text-font=TeX Gyre Termes]{times-math}
+\end{verbatim}
+\end{docblock}
+
+\ifchinese
+匹配时忽略普通空格和大小写，再恢复为规范字体名进行字体检查和字形配置。
+例如 \opt{TeXGyreTermes} 与 \opt{tex gyre termes} 等效。
+未知值或空值会报错并中止编译。
+\else
+Matching ignores ordinary spaces and case, then restores
+the canonical font name for font lookup and configuration. For example,
+\opt{TeXGyreTermes} and \opt{tex gyre termes} are equivalent.
+Unknown or empty values stop compilation with an error.
+\fi
+
+\ifchinese
+\opt{text-font=none} 显式关闭文字字体层，只使用数学字体，且不产生
+缺字体警告。默认字体缺失时也会跳过该层，但会发出警告；
+不会自动启用 TeX Gyre Termes 文字字体层。
+\else
+\opt{text-font=none} explicitly disables the text-font layer and uses
+only the math fonts, without a missing-font warning. An unavailable
+default font also causes the layer to be skipped, but with a warning;
+the TeX Gyre Termes text layer is not enabled automatically.
+\fi
+
+\begin{verbatim}
+\usepackage[text-font=none]{times-math}
+\end{verbatim}
+
+\ifchinese
+该选项选择的是内置配置，并不接受任意文字字体。
+\else
+This option selects a built-in configuration; it does not accept an
+arbitrary text font.
+\fi
+
+\subsection{\opt{math-font}}
+
+\ifchinese
+默认值为 \opt{XITS Math}，提供数学参数和最后一级字形回退。
+可填写字体名或字体文件名；替换字体须含有 OpenType MATH 表，
+并覆盖文档所需的其余符号。
+TeX Gyre Termes Math 与补充积分号字体仍会加载，Times New Roman 的优先级不变。
+基底字体的参数会影响分式、上下标和重音的位置。
+\else
+The default, \opt{XITS Math}, supplies the math parameters and final
+glyph fallback. A font name or filename can be used. A replacement
+needs an OpenType MATH table and the
+remaining symbols required by the document. TeX Gyre Termes Math and
+the integral supplement are still loaded, and Times New Roman keeps
+its priority. The base font's parameters affect fractions, scripts and
+accent placement.
+\fi
+
+\begin{verbatim}
+\usepackage[math-font=STIXTwoMath-Regular.otf]{times-math}
+\end{verbatim}
+
+\subsection{\opt{math-style}, \opt{bold-style}}
+
+\ifchinese
+这两个选项交给 \pkg{unicode-math}，控制普通字母与粗体字母的样式。
+未指定时沿用 \pkg{unicode-math} 的默认设置。
+例如，选择 ISO 样式：
+\else
+These options are passed to \pkg{unicode-math} to select the styles
+of ordinary and bold letters. When omitted, its defaults are used.
+For example, to select the ISO styles:
+\fi
+
+\begin{verbatim}
+\usepackage[math-style=ISO,bold-style=ISO]{times-math}
+\end{verbatim}
+
+\ifchinese
+取值及字母样式规则见 \file{unicode-math.pdf}。
+如果文档已经加载了 \pkg{unicode-math}，可直接使用其设置命令：
+\else
+See \file{unicode-math.pdf} for the available values and alphabet
+rules. If the document has already loaded \pkg{unicode-math}, use
+its setup command directly:
+\fi
+
+\begin{verbatim}
+\unimathsetup{math-style=ISO,bold-style=ISO}
+\end{verbatim}
+
+\section{\ifchinese 宏包兼容性\else Package compatibility\fi}
+
+\ifchinese
+\pkg{amsmath} 已由本包加载。
+\pkg{mathtools}、\pkg{amsthm} 和 \pkg{siunitx} 可以共同使用；
+下面的加载顺序可用于定理、扩展公式命令和单位排版：
+\else
+\pkg{amsmath} is already loaded by this package.
+\pkg{mathtools}, \pkg{amsthm} and \pkg{siunitx} can be used alongside
+it. The following loading order supports theorem environments,
+extended equation commands and units:
+\fi
+
+\begin{verbatim}
+\usepackage{mathtools,amsthm,siunitx}
+\usepackage{times-math}
+\end{verbatim}
+
+\ifchinese
+不要再加载替换数学字体的宏包，例如 \pkg{newtxmath}、\pkg{txfonts}
+或 \pkg{mathptmx}，否则会改变本包设置的字体。
+旧式符号与字母字体包 \pkg{amssymb}、\pkg{amsfonts}、\pkg{latexsym}、
+\pkg{mathrsfs}、\pkg{eucal}，以及 \pkg{bm} 也不应重复加载。
+这些包可能重定义命令、覆盖字形，某些加载顺序还会直接报错。
+本包在文档开始时检查后面这六个包并发出警告。
+\else
+Do not also load packages that replace the math fonts, such as
+\pkg{newtxmath}, \pkg{txfonts} or \pkg{mathptmx}; they change the
+font setup established here. The legacy symbol and alphabet packages
+\pkg{amssymb}, \pkg{amsfonts}, \pkg{latexsym}, \pkg{mathrsfs},
+\pkg{eucal}, and the \pkg{bm} package should also be omitted.
+They may redefine commands, override glyphs or cause errors, depending
+on loading order. \pkg{times-math} checks for these last six packages at the
+start of the document and issues a warning.
+\fi
+
+\subsection{\ifchinese 旧命令接口\else Legacy command interfaces\fi}
+
+\begingroup
+\raggedright
+\ifchinese
+常用旧命令名由本包补充。数学字母接口包括
+\cmd{bm}、\cmd{Bbb} 和 \cmd{mathbbm}；符号接口包括
+\cmd{Box}、\cmd{Diamond}、\cmd{square}、\cmd{lozenge}、
+\cmd{blacksquare}、\cmd{blacklozenge}、\cmd{lhd}、\cmd{rhd}、
+\cmd{unlhd}、\cmd{unrhd}、\cmd{leadsto}、\cmd{doteqdot}、
+\cmd{doublecap}、\cmd{doublecup}、\cmd{thicksim}、\cmd{thickapprox}、
+\cmd{centerdot} 和 \cmd{yen}。
+\else
+The package supplies common legacy names. Alphabet interfaces include
+\cmd{bm}, \cmd{Bbb} and \cmd{mathbbm}; symbol interfaces include
+\cmd{Box}, \cmd{Diamond}, \cmd{square}, \cmd{lozenge},
+\cmd{blacksquare}, \cmd{blacklozenge}, \cmd{lhd}, \cmd{rhd},
+\cmd{unlhd}, \cmd{unrhd}, \cmd{leadsto}, \cmd{doteqdot},
+\cmd{doublecap}, \cmd{doublecup}, \cmd{thicksim}, \cmd{thickapprox},
+\cmd{centerdot} and \cmd{yen}.
+\fi
+\par
+\endgroup
+
+\ifchinese
+其中 \cmd{bm} 指向 \cmd{symbf}，适用于粗体数学字母；
+它不实现 \pkg{bm} 对任意公式加粗的算法。
+\cmd{mathbbm} 使用当前数学字体的黑板体字形，并非载入
+\pkg{bbm} 的原字体。
+\else
+Here \cmd{bm} points to \cmd{symbf} for bold mathematical letters;
+it does not implement \pkg{bm}'s algorithm for boldening arbitrary
+formulas. \cmd{mathbbm} uses the current math font's blackboard glyphs,
+not the original fonts of the \pkg{bbm} package.
+\fi
+
+\begin{docblock}
+\ifchinese
+六个传统字体命令默认按下表转为数学字母命令。
+这会改变它们在 \pkg{unicode-math} 下原有的文字字体路径。
+公式中若需要普通文字，应使用 \cmd{text}。
+\else
+The six traditional font commands are redirected as shown below.
+This changes their text-font behaviour under \pkg{unicode-math}.
+For ordinary text within a formula, use \cmd{text}.
+\fi
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\ifchinese 传统命令\else Traditional command\fi &
+\ifchinese 数学字母命令\else Math alphabet command\fi\\
+\midrule
+\cmd{mathrm} & \cmd{symup}\\
+\cmd{mathbf} & \cmd{symbfup}\\
+\cmd{mathit} & \cmd{symit}\\
+\cmd{mathsf} & \cmd{symsfup}\\
+\cmd{mathtt} & \cmd{symtt}\\
+\cmd{boldsymbol} & \cmd{symbf}\\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{docblock}
+
+\section{\ifchinese 字体差异与缺字\else Font differences and missing glyphs\fi}
+
+\ifchinese
+Times New Roman 的不同版本在字形设计和覆盖范围上可能有差别。
+由数学字体提供的定界符、大算符和特殊字母也保留各自字体的设计。
+\else
+Versions of Times New Roman can differ in glyph design and coverage.
+Delimiters, large operators and special alphabets retain the designs
+of the math fonts that supply them.
+\fi
+
+\ifchinese
+查找命令名、Unicode 码位和字形对照可看 \file{times-math-glyphs.pdf}。
+其中 N 列是本包采用 \opt{literal} 数学样式时的输出，
+其余列按码位显示原始字体的字形。
+\else
+The \file{times-math-glyphs.pdf} reference lists command names, Unicode
+codepoints and font comparisons. Its N column shows package output
+with \opt{literal} math styles; the other columns show raw font glyphs
+at the listed codepoints.
+\fi
+
+\ifchinese
+数学字母样式并非对所有字符都有对应变体。
+例如 Unicode 没有完整的双线斜体字母表，\cmd{symbbit} 不能为任意
+拉丁字母生成双线斜体。带变体的希腊字母和样式嵌套也应检查实际输出。
+缺字时，日志会给出码位和查找失败的字体；报告问题时应附上该信息及
+能复现的最小文档。
+\else
+Not every character has a counterpart in every math alphabet.
+For example, Unicode does not encode a complete double-struck italic
+alphabet, so \cmd{symbbit} cannot supply one for arbitrary Latin
+letters. Check the output of variant Greek letters and nested style
+commands as well. Missing-glyph messages in the log identify the
+codepoint and the font used; include that information and a minimal
+document when reporting a problem.
+\fi
+
+\ifchinese
+在本包之后重新调用不带 \opt{range} 的 \cmd{setmathfont}，
+会替换整个数学字体设置。只调整某些字符时，应明确给出字符区间，
+并检查它是否覆盖了本包已有的设置。
+\else
+A subsequent \cmd{setmathfont} call without \opt{range} replaces the
+whole math setup. For a local character change, specify the intended
+range and check which package assignments it overrides.
+\fi
+
+\section{\ifchinese 源文件与许可\else Sources and licences\fi}
+
+\ifchinese
+包源码在 \file{times-math.dtx} 中，由 \file{times-math.ins} 提取。
+两版手册共用 \file{times-math.ltx} 正文与 \file{times-math-doc.tex} 版式，
+通过 \cmd{ifchinese} 切换语言。
+\else
+\file{times-math.dtx} is the package source, extracted by
+\file{times-math.ins}. Both manuals share the \file{times-math.ltx} body
+and \file{times-math-doc.tex} preamble, with \cmd{ifchinese} selecting
+the language.
+\fi
+
+\ifchinese
+\file{dev/} 中的脚本维护字符区间与补充字体。
+\file{make data} 更新区间，\file{make font} 从 Termes 重建 OTF。
+\opt{TIMES\_MATH\_TNR} 可指定生成区间时读取的 Times New Roman 正体文件。
+工具依赖及检查步骤见 \file{README.md}。
+项目仓库：\url{https://github.com/hithesis/times-math}。
+\else
+Scripts in \file{dev/} maintain the ranges and supplementary font.
+\file{make data} updates the ranges; \file{make font} rebuilds the OTF
+from Termes. \opt{TIMES\_MATH\_TNR} selects the Times New Roman regular-face
+file for range generation. Tool requirements and checks are described
+in \file{README.md}. The project repository is at
+\url{https://github.com/hithesis/times-math}.
+\fi
+
+\ifchinese
+源码使用 LPPL 1.3c 或更高版本，见 \file{LICENSE}。
+补充字体是 TeX Gyre Termes Math 的改名衍生作品，使用 GUST Font License 1.0。
+原作者、源字体版本与文件清单见 \file{MANIFEST-times-math-integrals.txt}。
+\else
+The sources use LPPL 1.3c or later; see \file{LICENSE}. The supplementary
+font is a renamed derivative of TeX Gyre Termes Math under the GUST
+Font License 1.0. Its original authors, source version and file list
+are recorded in \file{MANIFEST-times-math-integrals.txt}.
+\fi
+
+\ifchinese
+字形清单的版式参考 \pkg{unicode-math} 与 \pkg{euler-math} 的符号文档。
+\else
+The glyph reference follows the symbol documents supplied by
+\pkg{unicode-math} and \pkg{euler-math}.
+\fi
+
+\end{document}

@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{siunitx}
+\usepackage{times-math}
+
+\newtheorem{theorem}{Theorem}
+
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+
+\begin{document}
+
+\begin{theorem}[Gauss]
+  For $n \in \mathbb{N}$, $\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$.
+\end{theorem}
+\begin{proof}
+  By induction; see \eqref{eq:main}.
+\end{proof}
+
+\begin{equation}\label{eq:main}
+  E = mc^2, \qquad \alpha + \beta = \gamma.
+\end{equation}
+
+mathtools: $X \xLeftrightarrow{\text{above}} Y$,\quad
+$a \coloneqq b$,\quad paired delimiters:
+\[ \abs{x} = \begin{cases} x, & x \ge 0 \\ -x, & x < 0 \end{cases} \]
+
+siunitx: \qty{9.81}{\meter\per\second\squared},\quad
+\qty{1.5e-3}{\mole\per\liter},\quad
+\num{12345.6789},\quad \ang{30}.
+
+\end{document}

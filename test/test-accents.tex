@@ -1,0 +1,33 @@
+\documentclass{article}
+\usepackage{times-math}
+\usepackage[margin=20mm]{geometry}
+\setlength{\parindent}{0pt}
+\newcommand{\accentrow}[1]{%
+  \texttt{\string#1}\quad
+  $#1{x}\quad #1{X}\quad #1{f}\quad #1{H}\quad
+   #1{\alpha}\quad #1{\Gamma}\quad #1{\mathbf{x}}\quad
+   A_{#1{x}}^{#1{H}}$\par\medskip}
+\begin{document}
+\section*{Times Math accents}
+\accentrow{\grave}
+\accentrow{\acute}
+\accentrow{\hat}
+\accentrow{\tilde}
+\accentrow{\bar}
+\accentrow{\breve}
+\accentrow{\dot}
+\accentrow{\ddot}
+\accentrow{\check}
+\accentrow{\mathring}
+\accentrow{\vec}
+\accentrow{\underbar}
+\accentrow{\notaccent}
+\medskip
+$\widehat{x+y}\quad \widetilde{x+y}\quad \widecheck{x+y}\quad
+ \widebreve{x+y}\quad \overrightarrow{x+y}\quad \underleftarrow{x+y}$
+\par\medskip
+$\overbrace{x+y+z}^{n}\quad \underbrace{x+y+z}_{n}\quad
+ \overline{x+y}\quad \underline{x+y}\quad
+ \hat{\hat{x}}\quad \dot{\bar{x}}\quad
+ a\not=b\quad a\notin B\quad a\not\sim b$
+\end{document}
